@@ -1,0 +1,29 @@
+# NOTE: This workflow is inert while examples/minimal-ai-tool lives nested
+# inside the prod-ready-ai-app toolkit repository: {{GITHUB_USERNAME}} is a
+# placeholder, so the `uses:` reference below does not resolve to a real
+# workflow from here. It becomes active once this example is copied out
+# into its own repository and {{GITHUB_USERNAME}} is replaced with the
+# GitHub org/user that hosts your copy of prod-ready-ai-app.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  # Runs even while the reusable-ci job below is inert, so this file always
+  # demonstrates a real push/pull_request triggered step.
+  context:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Note toolkit context
+        run: 'echo "minimal-ai-tool CI note. Replace {{GITHUB_USERNAME}} in this file before relying on the reusable-ci job."'
+
+  ci:
+    uses: "{{GITHUB_USERNAME}}/prod-ready-ai-app/.github/workflows/reusable-ci.yml@main"
+    with:
+      node-version: "20"
+      working-directory: "."
+      test-command: "npm test"
+      run-secret-scan: true

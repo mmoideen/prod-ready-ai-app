@@ -1,0 +1,22 @@
+# NOTE: This workflow is inert while examples/minimal-ai-tool lives nested
+# inside the prod-ready-ai-app toolkit repository: {{GITHUB_USERNAME}} is a
+# placeholder, so the `uses:` reference below does not resolve from here.
+# It becomes active once this example is copied out into its own
+# repository, {{GITHUB_USERNAME}} is replaced with the GitHub org/user
+# hosting your copy of prod-ready-ai-app, and the deployment target's
+# secrets (for example VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID) are
+# configured on the new repository. `secrets: inherit` passes the caller
+# repository's secrets straight through to the reusable deploy workflow.
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    uses: "{{GITHUB_USERNAME}}/prod-ready-ai-app/.github/workflows/reusable-deploy.yml@main"
+    with:
+      environment: "production"
+      working-directory: "."
+    secrets: inherit

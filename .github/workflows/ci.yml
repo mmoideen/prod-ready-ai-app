@@ -1,0 +1,184 @@
+name: ci
+
+# Top level CI for the toolkit itself. It proves the toolkit is coherent:
+# the scorecard's own tests pass, the rubric and checklist stay in sync
+# with the implemented rules, and both the template skeleton and the
+# example tool score at or above the production ready threshold when
+# graded by the scorecard that ships in this same repository.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  scorecard:
+    name: Scorecard tests and readiness scans
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: scorecard/package-lock.json
+
+      - name: Install and test the scorecard
+        working-directory: scorecard
+        run: |
+          npm ci
+          npm test
+
+      - name: Scan the template skeleton (min score 85)
+        run: |
+          node scorecard/dist/cli.js --path template --min-score 85 \
+            --output "$RUNNER_TEMP/template-report.md"
+          cat "$RUNNER_TEMP/template-report.md" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Scan the example tool (min score 85)
+        run: |
+          node scorecard/dist/cli.js --path examples/minimal-ai-tool --min-score 85 \
+            --output "$RUNNER_TEMP/example-report.md"
+          cat "$RUNNER_TEMP/example-report.md" >> "$GITHUB_STEP_SUMMARY"
+
+  hygiene:
+    name: Repo hygiene and rubric sync
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: No em dashes anywhere
+        run: node scripts/check-no-emdash.mjs
+
+      - name: All YAML parses
+        run: node scripts/validate-yaml.mjs
+
+      - name: All seven document templates exist
+        run: |
+          for f in PRODUCTION_READINESS UAT_CHECKLIST RUNBOOK SUPPORT_HANDOFF ADR INCIDENT_POSTMORTEM THREAT_MODEL; do
+            test -f "templates/$f.md" || { echo "missing templates/$f.md"; exit 1; }
+          done
+          echo "all templates present"
+
+      - name: Scorecard, rubric, and checklist agree
+        run: |
+          cd scorecard && npm ci && npm run build && cd ..
+          node scripts/check-rubric-sync.mjs
+
+  secret-scan:
+    name: Secret scan (gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download pinned gitleaks binary
+        run: |
+          GITLEAKS_VERSION=8.30.1
+          curl -sSfL -o gitleaks.tar.gz \
+            "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          tar -xzf gitleaks.tar.gz gitleaks
+          chmod +x gitleaks
+
+      - name: Scan repository
+        run: ./gitleaks detect --source . --no-banner --redact
+
+  template-build:
+    name: Template app builds and tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: template/package-lock.json
+
+      - name: Install, check, build, test, eval
+        working-directory: template
+        run: |
+          npm ci
+          npm run typecheck
+          npm run build
+          npm test
+          npm run eval
+
+  example-build:
+    name: Example tool builds and tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: examples/minimal-ai-tool/package-lock.json
+
+      - name: Install, check, build, test, eval
+        working-directory: examples/minimal-ai-tool
+        run: |
+          npm ci
+          npm run typecheck
+          npm run build
+          npm test
+          npm run eval
+
+  terraform-validate:
+    name: Terraform modules validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+
+      - name: Format check
+        run: |
+          terraform fmt -check -recursive infra-modules/terraform
+          terraform fmt -check -recursive template/infra/terraform
+          terraform fmt -check -recursive examples/minimal-ai-tool/infra/terraform
+
+      - name: Validate every module and consumer
+        run: |
+          for dir in \
+            infra-modules/terraform/keyvault \
+            infra-modules/terraform/monitoring \
+            infra-modules/terraform/postgres \
+            template/infra/terraform \
+            examples/minimal-ai-tool/infra/terraform; do
+            echo "== validating $dir"
+            terraform -chdir="$dir" init -backend=false -input=false > /dev/null
+            terraform -chdir="$dir" validate
+          done
+
+  bicep-validate:
+    name: Bicep modules compile
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Ensure bicep is available
+        run: az bicep install
+
+      - name: Compile every module and consumer
+        run: |
+          for f in \
+            infra-modules/bicep/keyvault/main.bicep \
+            infra-modules/bicep/monitoring/main.bicep \
+            infra-modules/bicep/postgres/main.bicep \
+            template/infra/bicep/main.bicep \
+            examples/minimal-ai-tool/infra/bicep/main.bicep; do
+            echo "== building $f"
+            az bicep build --file "$f" --stdout > /dev/null
+          done
