@@ -4,7 +4,7 @@ An internal tool lifecycle toolkit: a repeatable way to take internal AI tools
 from prototype to production, encoded as reusable scaffolding, reusable
 automation, and an enforceable standard.
 
-[![ci](https://github.com/{{GITHUB_USERNAME}}/prod-ready-ai-app/actions/workflows/ci.yml/badge.svg)](https://github.com/{{GITHUB_USERNAME}}/prod-ready-ai-app/actions/workflows/ci.yml)
+[![ci](https://github.com/mmoideen/prod-ready-ai-app/actions/workflows/ci.yml/badge.svg)](https://github.com/mmoideen/prod-ready-ai-app/actions/workflows/ci.yml)
 
 ## The problem
 
@@ -96,7 +96,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: {{GITHUB_USERNAME}}/prod-ready-ai-app/actions/reusable-readiness@main
+      - uses: mmoideen/prod-ready-ai-app/actions/reusable-readiness@main
         with:
           min-score: "85"
 ```
@@ -161,7 +161,7 @@ scripts/         repo hygiene: em dash ban, YAML validation, rubric sync
 
 ## Attribution
 
-Built by {{AUTHOR_NAME}} ([@{{GITHUB_USERNAME}}](https://github.com/{{GITHUB_USERNAME}}))
+Built by Manish Moideen ([@mmoideen](https://github.com/mmoideen))
 as a portfolio project demonstrating platform engineering for internal AI
 tooling in an Azure environment with strong auditability expectations. Every
 named owner, team, and organization in the templates and examples is a

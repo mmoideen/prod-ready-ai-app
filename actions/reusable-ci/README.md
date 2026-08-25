@@ -56,7 +56,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run CI checks
-        uses: {{GITHUB_USERNAME}}/prod-ready-ai-app/actions/reusable-ci@main
+        uses: mmoideen/prod-ready-ai-app/actions/reusable-ci@main
         with:
           node-version: "20"
           working-directory: "."
