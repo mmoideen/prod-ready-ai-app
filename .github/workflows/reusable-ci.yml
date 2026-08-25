@@ -1,0 +1,112 @@
+name: Reusable CI workflow
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        description: Node.js version
+        type: string
+        default: "20"
+      working-directory:
+        description: Working directory for npm commands
+        type: string
+        default: "."
+      test-command:
+        description: Test command to run
+        type: string
+        default: "npm test"
+      run-secret-scan:
+        description: Whether to run secret scanning
+        type: boolean
+        default: true
+
+jobs:
+  checks:
+    name: Build and test checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Built in npm caching is intentionally not enabled: setup-node fails
+      # outright when the caller has no package-lock.json, and this workflow
+      # must stay usable for repos that have not committed a lockfile yet.
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Install dependencies
+        shell: bash
+        working-directory: ${{ inputs.working-directory }}
+        run: |
+          if [ -f "package-lock.json" ]; then
+            npm ci
+          else
+            npm install
+          fi
+
+      # Optional scripts run only when package.json declares them. The node
+      # probe exits 1 when the script is absent, which makes the if branch
+      # skip cleanly instead of failing on a missing script.
+      - name: Run lint when a lint script exists
+        shell: bash
+        working-directory: ${{ inputs.working-directory }}
+        run: |
+          if node -e "process.exit((require('./package.json').scripts || {}).lint ? 0 : 1)"; then
+            npm run lint
+          else
+            echo "No lint script found, skipping"
+          fi
+
+      - name: Run typecheck when a typecheck script exists
+        shell: bash
+        working-directory: ${{ inputs.working-directory }}
+        run: |
+          if node -e "process.exit((require('./package.json').scripts || {}).typecheck ? 0 : 1)"; then
+            npm run typecheck
+          else
+            echo "No typecheck script found, skipping"
+          fi
+
+      - name: Run build when a build script exists
+        shell: bash
+        working-directory: ${{ inputs.working-directory }}
+        run: |
+          if node -e "process.exit((require('./package.json').scripts || {}).build ? 0 : 1)"; then
+            npm run build
+          else
+            echo "No build script found, skipping"
+          fi
+
+      - name: Run tests
+        working-directory: ${{ inputs.working-directory }}
+        run: ${{ inputs.test-command }}
+
+  secret-scan:
+    name: Secret scanning
+    if: ${{ inputs.run-secret-scan }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # The gitleaks binary is downloaded directly from its GitHub release
+      # (pinned version) instead of using the gitleaks GitHub Action, which
+      # requires a license key for organization accounts. The binary itself
+      # is MIT licensed and free for all use.
+      - name: Download gitleaks binary
+        shell: bash
+        run: |
+          GITLEAKS_VERSION=8.30.1
+          curl -sSfL -o gitleaks.tar.gz \
+            "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          tar -xzf gitleaks.tar.gz gitleaks
+          chmod +x gitleaks
+
+      - name: Run gitleaks scan
+        shell: bash
+        run: |
+          ./gitleaks detect --source . --no-banner --redact -v

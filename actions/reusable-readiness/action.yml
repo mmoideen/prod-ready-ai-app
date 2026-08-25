@@ -1,0 +1,78 @@
+name: Reusable readiness action
+description: Composite action that runs the production readiness scorecard and reports the result
+
+inputs:
+  path:
+    description: Path to scan for readiness, relative to the caller workspace
+    required: false
+    default: "."
+  min-score:
+    description: Minimum readiness score required
+    required: false
+    default: "85"
+  advisory:
+    description: If true, report below-threshold scores as advisory instead of failing
+    required: false
+    default: "false"
+  toolkit-repo:
+    description: Toolkit repository (owner/repo) to fetch the scorecard from
+    required: false
+    default: "{{GITHUB_USERNAME}}/prod-ready-ai-app"
+  toolkit-ref:
+    description: Branch or tag of the toolkit to fetch
+    required: false
+    default: "main"
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: "20"
+
+    # The toolkit is cloned into RUNNER_TEMP, outside the caller workspace,
+    # so the scorecard scan of the caller repository is never contaminated
+    # by the toolkit's own files (which include intentionally failing test
+    # fixtures). Inputs are passed through env vars, never interpolated into
+    # the script body, to avoid shell injection via expression expansion.
+    - name: Fetch toolkit and build scorecard CLI
+      shell: bash
+      env:
+        TOOLKIT_REPO: ${{ inputs.toolkit-repo }}
+        TOOLKIT_REF: ${{ inputs.toolkit-ref }}
+      run: |
+        TOOLKIT_DIR="$RUNNER_TEMP/prod-ready-toolkit"
+        rm -rf "$TOOLKIT_DIR"
+        git clone --depth 1 --branch "$TOOLKIT_REF" \
+          "https://github.com/${TOOLKIT_REPO}.git" "$TOOLKIT_DIR"
+        cd "$TOOLKIT_DIR/scorecard"
+        npm ci
+        npm run build
+
+    - name: Run readiness scorecard
+      shell: bash
+      env:
+        SCAN_PATH: ${{ inputs.path }}
+        MIN_SCORE: ${{ inputs.min-score }}
+        ADVISORY: ${{ inputs.advisory }}
+      run: |
+        TOOLKIT_DIR="$RUNNER_TEMP/prod-ready-toolkit"
+        REPORT="$RUNNER_TEMP/readiness-report.md"
+
+        ARGS=(--path "$SCAN_PATH" --min-score "$MIN_SCORE" --format md --output "$REPORT")
+        if [ "$ADVISORY" = "true" ]; then
+          ARGS+=(--advisory)
+        fi
+
+        set +e
+        node "$TOOLKIT_DIR/scorecard/dist/cli.js" "${ARGS[@]}"
+        EXIT_CODE=$?
+        set -e
+
+        # Publish the report to the job summary as well as the log above.
+        if [ -f "$REPORT" ]; then
+          cat "$REPORT" >> "$GITHUB_STEP_SUMMARY"
+        fi
+
+        exit $EXIT_CODE
