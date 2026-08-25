@@ -1,0 +1,27 @@
+# This workflow is inert while template/ sits inside the prod-ready-ai-app toolkit
+# repository: GitHub Actions only discovers workflows under the repository ROOT
+# .github/workflows/ directory, and this file lives under template/.github/workflows/
+# instead. It activates automatically once a team copies template/ out to the root
+# of a new repository. Replace {{GITHUB_USERNAME}} with the org or user that hosts
+# the toolkit repository (or leave it if the toolkit is published under that name).
+name: Readiness gate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  readiness:
+    name: Production readiness scorecard
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check production readiness
+        uses: "{{GITHUB_USERNAME}}/prod-ready-ai-app/actions/reusable-readiness@main"
+        with:
+          path: "."
+          min-score: "85"
+          advisory: "false"

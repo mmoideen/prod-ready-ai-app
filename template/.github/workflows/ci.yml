@@ -1,0 +1,20 @@
+# This workflow is inert while template/ sits inside the prod-ready-ai-app toolkit
+# repository: GitHub Actions only discovers workflows under the repository ROOT
+# .github/workflows/ directory, and this file lives under template/.github/workflows/
+# instead. It activates automatically once a team copies template/ out to the root
+# of a new repository. Replace {{GITHUB_USERNAME}} with the org or user that hosts
+# the toolkit repository (or leave it if the toolkit is published under that name).
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  ci:
+    uses: "{{GITHUB_USERNAME}}/prod-ready-ai-app/.github/workflows/reusable-ci.yml@main"
+    with:
+      node-version: "20"
+      working-directory: "."
+      test-command: "npm test"
