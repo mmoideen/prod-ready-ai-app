@@ -32,7 +32,7 @@ jobs:
       # outright when the caller has no package-lock.json, and this workflow
       # must stay usable for repos that have not committed a lockfile yet.
       - name: Setup Node.js
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ inputs.node-version }}
 
