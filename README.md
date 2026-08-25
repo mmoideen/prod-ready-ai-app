@@ -95,7 +95,7 @@ jobs:
   readiness:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: mmoideen/prod-ready-ai-app/actions/reusable-readiness@main
         with:
           min-score: "85"
