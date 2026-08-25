@@ -2,6 +2,9 @@
 # Minor and patch updates are grouped into a single weekly PR per package
 # area to keep review load low; major updates stay individual because they
 # can carry breaking changes that need their own review and test pass.
+# Note: pushing a change to this file triggers a fresh Dependabot scan of
+# every ecosystem listed below, which is also the supported way to make
+# Dependabot recreate its pull requests after a history rewrite.
 version: 2
 updates:
   - package-ecosystem: npm
