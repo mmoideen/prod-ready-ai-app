@@ -1,0 +1,36 @@
+# NOTE: This workflow is inert while examples/minimal-ai-tool lives nested
+# inside the prod-ready-ai-app toolkit repository: {{GITHUB_USERNAME}} is a
+# placeholder, so the composite action reference below does not resolve
+# from here. It becomes active once this example is copied out into its
+# own repository and {{GITHUB_USERNAME}} is replaced with the GitHub
+# org/user hosting your copy of prod-ready-ai-app.
+name: Eval gate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Run evaluation gate
+        uses: "{{GITHUB_USERNAME}}/prod-ready-ai-app/actions/reusable-eval-gate@main"
+        with:
+          eval-command: "npm run eval"
+          working-directory: "."

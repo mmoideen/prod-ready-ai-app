@@ -1,0 +1,22 @@
+{
+  "name": "minimal-ai-tool",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Minimal internal AI tool (ticket summarizer) proving the Proready Lifecycle Toolkit's production readiness standards are achievable in a plain TypeScript service with zero runtime dependencies.",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "test": "npm run build && node --test dist/tests/*.test.js",
+    "eval": "node evals/run.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "5.5.4",
+    "@types/node": "20.14.10"
+  },
+  "license": "UNLICENSED"
+}

@@ -1,0 +1,31 @@
+# NOTE: This workflow is inert while examples/minimal-ai-tool lives nested
+# inside the prod-ready-ai-app toolkit repository: {{GITHUB_USERNAME}} is a
+# placeholder, so the composite action reference below does not resolve
+# from here (and would clone the toolkit at its @main ref, not this
+# working tree, even if it did). It becomes active once this example is
+# copied out into its own repository and {{GITHUB_USERNAME}} is replaced
+# with the GitHub org/user hosting your copy of prod-ready-ai-app.
+# `path: "."` assumes this example is the repository root once copied out;
+# adjust if you nest it elsewhere.
+name: Readiness gate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  readiness:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check production readiness
+        uses: "{{GITHUB_USERNAME}}/prod-ready-ai-app/actions/reusable-readiness@main"
+        with:
+          path: "."
+          min-score: "85"
+          advisory: "false"
+          toolkit-repo: "{{GITHUB_USERNAME}}/prod-ready-ai-app"
+          toolkit-ref: "main"
