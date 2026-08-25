@@ -1,3 +1,7 @@
+# Dependency update automation for the toolkit repository itself.
+# Minor and patch updates are grouped into a single weekly PR per package
+# area to keep review load low; major updates stay individual because they
+# can carry breaking changes that need their own review and test pass.
 version: 2
 updates:
   - package-ecosystem: npm
@@ -6,6 +10,11 @@ updates:
       interval: weekly
       day: monday
       time: "03:00"
+    groups:
+      scorecard-minor-and-patch:
+        update-types:
+          - minor
+          - patch
 
   - package-ecosystem: npm
     directory: /template
@@ -13,6 +22,11 @@ updates:
       interval: weekly
       day: monday
       time: "03:00"
+    groups:
+      template-minor-and-patch:
+        update-types:
+          - minor
+          - patch
 
   - package-ecosystem: npm
     directory: /examples/minimal-ai-tool
@@ -20,6 +34,11 @@ updates:
       interval: weekly
       day: monday
       time: "03:00"
+    groups:
+      example-minor-and-patch:
+        update-types:
+          - minor
+          - patch
 
   - package-ecosystem: github-actions
     directory: /
@@ -27,3 +46,7 @@ updates:
       interval: weekly
       day: monday
       time: "03:00"
+    groups:
+      actions-all:
+        patterns:
+          - "*"
