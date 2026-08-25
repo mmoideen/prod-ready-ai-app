@@ -64,7 +64,7 @@ jobs:
 
 - The action clones the toolkit repository into the runner's temp directory (outside your workspace), so the toolkit's own files, including its intentionally failing test fixtures, never contaminate the scan of your repository
 - The toolkit clone is unauthenticated, which works for the public toolkit repository; fork it and adjust toolkit-repo if you host a private copy
-- The scorecard report is written to both: (1) a local file (readiness-report/scorecard.md) and (2) the GitHub Actions step summary (visible in the workflow run page)
+- The scorecard report is printed to the job log and appended to the GitHub Actions step summary (visible on the workflow run page); a copy is written to $RUNNER_TEMP/readiness-report.md for the duration of the job
 - The toolkit repository must be public or the workflow runner must have access to it (e.g., via a private GitHub token in the runner)
 - Use advisory mode ("true") during initial integration to assess readiness without blocking merges
 - Switch to enforcement mode ("false") once the team is ready to maintain the score
