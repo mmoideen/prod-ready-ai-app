@@ -1,0 +1,30 @@
+name: Reusable eval gate action
+description: Composite action that runs an evaluation command and fails if exit code is non-zero
+
+inputs:
+  eval-command:
+    description: Evaluation command to run
+    required: false
+    default: "npm run eval"
+  working-directory:
+    description: Working directory for the eval command
+    required: false
+    default: "."
+
+runs:
+  using: composite
+  steps:
+    - name: Run evaluation
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        set +e
+        ${{ inputs.eval-command }}
+        EXIT_CODE=$?
+        set -e
+
+        if [ $EXIT_CODE -ne 0 ]; then
+          echo "::error::Evaluation gate failed with exit code $EXIT_CODE. See workflow logs for details. Look in ${{ inputs.working-directory }} for the evaluation runner and its outputs."
+          exit 1
+        fi
+        exit 0

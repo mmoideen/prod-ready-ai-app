@@ -1,0 +1,107 @@
+name: Reusable deploy workflow
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: Deployment environment
+        type: string
+        default: "preview"
+      working-directory:
+        description: Working directory for deployment
+        type: string
+        default: "."
+    secrets:
+      VERCEL_TOKEN:
+        description: Vercel API token
+        required: false
+      VERCEL_ORG_ID:
+        description: Vercel organization ID
+        required: false
+      VERCEL_PROJECT_ID:
+        description: Vercel project ID
+        required: false
+
+jobs:
+  deploy:
+    name: Deploy to ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check if Vercel credentials are configured
+        id: check-credentials
+        shell: bash
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "has-credentials=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "has-credentials=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Notify deployment skipped
+        if: steps.check-credentials.outputs.has-credentials == 'false'
+        run: |
+          echo "::notice::Deployment skipped: Vercel credentials (VERCEL_TOKEN) not configured. To enable deployments, add VERCEL_TOKEN, VERCEL_ORG_ID, and VERCEL_PROJECT_ID as repository secrets."
+
+      - name: Setup Node.js
+        if: steps.check-credentials.outputs.has-credentials == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Vercel CLI
+        if: steps.check-credentials.outputs.has-credentials == 'true'
+        run: npm i -g vercel@latest
+
+      # The Vercel CLI is given the token explicitly with --token: relying on
+      # the VERCEL_TOKEN env var alone is not honored consistently across CLI
+      # versions. VERCEL_ORG_ID and VERCEL_PROJECT_ID are read from the env.
+      - name: Pull Vercel environment information
+        if: steps.check-credentials.outputs.has-credentials == 'true'
+        working-directory: ${{ inputs.working-directory }}
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          DEPLOY_ENV: ${{ inputs.environment }}
+        run: |
+          if [ "$DEPLOY_ENV" = "production" ]; then
+            vercel pull --yes --environment=production --token "$VERCEL_TOKEN"
+          else
+            vercel pull --yes --environment=preview --token "$VERCEL_TOKEN"
+          fi
+
+      - name: Build project artifacts
+        if: steps.check-credentials.outputs.has-credentials == 'true'
+        working-directory: ${{ inputs.working-directory }}
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          DEPLOY_ENV: ${{ inputs.environment }}
+        run: |
+          if [ "$DEPLOY_ENV" = "production" ]; then
+            vercel build --prod --token "$VERCEL_TOKEN"
+          else
+            vercel build --token "$VERCEL_TOKEN"
+          fi
+
+      - name: Deploy to Vercel
+        if: steps.check-credentials.outputs.has-credentials == 'true'
+        working-directory: ${{ inputs.working-directory }}
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          DEPLOY_ENV: ${{ inputs.environment }}
+        run: |
+          if [ "$DEPLOY_ENV" = "production" ]; then
+            vercel deploy --prebuilt --prod --token "$VERCEL_TOKEN"
+          else
+            vercel deploy --prebuilt --token "$VERCEL_TOKEN"
+          fi
