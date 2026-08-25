@@ -2,7 +2,7 @@
 PRODUCTION_READINESS.md checklist template
 This manual checklist mirrors the automated readiness scorecard rule for rule.
 Both implement rubric version 1.0.0 (see ../docs/RUBRIC.md).
-Fill in the date completed, run: npx prod-ready-scorecard --path . --min-score 85
+Fill in the date completed, then run the scorecard (from a checkout of the toolkit repository until the package is published): npx prod-ready-scorecard --path . --min-score 85
 Copy the final score into the sign-off block at the end.
 Replace {{TEAM_CHANNEL}} with your actual Slack/Teams channel.
 Replace {{PROJECT_NAME}} with your tool name.

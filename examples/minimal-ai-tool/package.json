@@ -18,5 +18,5 @@
     "typescript": "5.5.4",
     "@types/node": "20.14.10"
   },
-  "license": "UNLICENSED"
+  "license": "MIT"
 }

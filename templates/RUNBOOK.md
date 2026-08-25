@@ -65,7 +65,7 @@ Side: Application Insights (traces, exceptions, custom metrics)
 
 2. **Automated tests run.**
    - `npm test`: unit and integration tests.
-   - Scorecard: `npx prod-ready-scorecard --path . --min-score 85`.
+   - Scorecard: `npx prod-ready-scorecard --path . --min-score 85` (run from a checkout of the toolkit repository until the package is published; CI uses the reusable-readiness action either way).
    - Secret scan: gitleaks check (zero secrets committed).
    - If any step fails, deployment is blocked. Fix the issue and retry.
 

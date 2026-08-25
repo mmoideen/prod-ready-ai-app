@@ -21,7 +21,7 @@ A comprehensive CI workflow for building, testing, and scanning Node.js projects
 
 **Jobs:**
 - `checks`: Runs setup-node, installs dependencies (npm ci or npm install), conditionally runs lint/typecheck/build if scripts exist in package.json, then runs the test command
-- `secret-scan`: Downloads and runs gitleaks v8.18.2 to detect secrets in git history
+- `secret-scan`: Downloads and runs a pinned gitleaks release (v8.30.1 at the time of writing) to detect secrets in git history
 
 **Example usage:**
 
