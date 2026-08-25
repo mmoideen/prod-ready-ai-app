@@ -1,0 +1,3 @@
+{"id": "short-sentence", "input": "The quarterly report is ready for review.", "criteria": {"minLength": 5, "mustIncludeWord": "quarterly"}}
+{"id": "long-paragraph", "input": "This internal tool template gives platform teams a working example of authentication, role based access control, observability, and evaluation wiring so that a new project can start from something that already satisfies the production readiness rubric instead of an empty repository.", "criteria": {"minLength": 5, "mustIncludeWord": "template", "maxWords": 30}}
+{"id": "whitespace-heavy", "input": "   Multiple    spaces     should   collapse   into   a   clean   summary   output   for   review.   ", "criteria": {"minLength": 5, "mustIncludeWord": "Multiple"}}

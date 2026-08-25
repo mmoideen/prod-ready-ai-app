@@ -1,0 +1,37 @@
+{
+  "name": "internal-tool-template",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Application skeleton for a new internal AI tool: auth, RBAC, observability, evals, CI/CD, and infrastructure as code wired in from the first commit.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test src/tests/*.test.ts",
+    "eval": "tsx evals/run.mjs"
+  },
+  "dependencies": {
+    "next": "15.5.23",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "next-auth": "5.0.0-beta.32",
+    "openai": "7.5.0",
+    "@opentelemetry/api": "1.9.1",
+    "@opentelemetry/sdk-node": "0.221.0",
+    "@opentelemetry/resources": "2.10.0",
+    "@opentelemetry/sdk-trace-base": "2.10.0",
+    "@opentelemetry/semantic-conventions": "1.43.0",
+    "@azure/monitor-opentelemetry-exporter": "1.0.0-beta.32"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "@types/node": "22.20.1",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.5",
+    "eslint": "8.57.1",
+    "eslint-config-next": "15.5.23",
+    "tsx": "4.23.12"
+  }
+}

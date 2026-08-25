@@ -1,0 +1,24 @@
+# This workflow is inert while template/ sits inside the prod-ready-ai-app toolkit
+# repository: GitHub Actions only discovers workflows under the repository ROOT
+# .github/workflows/ directory, and this file lives under template/.github/workflows/
+# instead. It activates automatically once a team copies template/ out to the root
+# of a new repository. Replace {{GITHUB_USERNAME}} with the org or user that hosts
+# the toolkit repository (or leave it if the toolkit is published under that name).
+#
+# secrets: inherit passes this repository's secrets through to the reusable
+# workflow. The reusable workflow itself skips gracefully (prints a notice and
+# exits 0) when VERCEL_TOKEN is not configured, so this workflow is safe to
+# leave enabled before the team has set up a Vercel project.
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    uses: "{{GITHUB_USERNAME}}/prod-ready-ai-app/.github/workflows/reusable-deploy.yml@main"
+    with:
+      environment: "production"
+      working-directory: "."
+    secrets: inherit

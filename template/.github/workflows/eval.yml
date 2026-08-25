@@ -1,0 +1,33 @@
+# This workflow is inert while template/ sits inside the prod-ready-ai-app toolkit
+# repository: GitHub Actions only discovers workflows under the repository ROOT
+# .github/workflows/ directory, and this file lives under template/.github/workflows/
+# instead. It activates automatically once a team copies template/ out to the root
+# of a new repository. Replace {{GITHUB_USERNAME}} with the org or user that hosts
+# the toolkit repository (or leave it if the toolkit is published under that name).
+name: Eval gate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  eval:
+    name: Run summarize() evals
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run the eval gate
+        uses: "{{GITHUB_USERNAME}}/prod-ready-ai-app/actions/reusable-eval-gate@main"
+        with:
+          eval-command: "npm run eval"
