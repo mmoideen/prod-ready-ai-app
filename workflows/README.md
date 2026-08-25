@@ -120,7 +120,7 @@ jobs:
 ## Design notes
 
 - Reusable workflows must live in `.github/workflows/` in the toolkit repository to be callable from other repositories via `workflow_call`
-- All reusable workflows pin action versions to major tags (e.g., `actions/checkout@v4`) for stability
+- All reusable workflows pin action versions to major tags (e.g., `actions/checkout@v5`) for stability
 - Workflows detect optional features (like npm scripts) rather than failing, making them robust across different project layouts
 - The secret scanning job is optional and can be disabled if not needed
 - The deploy workflow gracefully skips if credentials are not configured, making it safe to use in public repositories
