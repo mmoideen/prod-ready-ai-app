@@ -35,7 +35,7 @@ on:
 
 jobs:
   ci:
-    uses: {{GITHUB_USERNAME}}/prod-ready-ai-app/.github/workflows/reusable-ci.yml@main
+    uses: mmoideen/prod-ready-ai-app/.github/workflows/reusable-ci.yml@main
     with:
       node-version: "20"
       working-directory: "."
@@ -82,7 +82,7 @@ on:
 
 jobs:
   deploy:
-    uses: {{GITHUB_USERNAME}}/prod-ready-ai-app/.github/workflows/reusable-deploy.yml@main
+    uses: mmoideen/prod-ready-ai-app/.github/workflows/reusable-deploy.yml@main
     with:
       environment: "production"
       working-directory: "."
@@ -101,7 +101,7 @@ When calling a reusable workflow, you can pass secrets in two ways:
 ```yaml
 jobs:
   deploy:
-    uses: {{GITHUB_USERNAME}}/prod-ready-ai-app/.github/workflows/reusable-deploy.yml@main
+    uses: mmoideen/prod-ready-ai-app/.github/workflows/reusable-deploy.yml@main
     secrets: inherit
 ```
 
@@ -110,7 +110,7 @@ jobs:
 ```yaml
 jobs:
   deploy:
-    uses: {{GITHUB_USERNAME}}/prod-ready-ai-app/.github/workflows/reusable-deploy.yml@main
+    uses: mmoideen/prod-ready-ai-app/.github/workflows/reusable-deploy.yml@main
     secrets:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}

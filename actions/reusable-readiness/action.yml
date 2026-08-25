@@ -17,7 +17,7 @@ inputs:
   toolkit-repo:
     description: Toolkit repository (owner/repo) to fetch the scorecard from
     required: false
-    default: "{{GITHUB_USERNAME}}/prod-ready-ai-app"
+    default: "mmoideen/prod-ready-ai-app"
   toolkit-ref:
     description: Branch or tag of the toolkit to fetch
     required: false

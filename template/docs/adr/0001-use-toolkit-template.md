@@ -49,7 +49,7 @@ tool-specific feature work has even started.
 
 ### Negative
 
-- We depend on the toolkit repository (`{{GITHUB_USERNAME}}/prod-ready-ai-app`)
+- We depend on the toolkit repository (`mmoideen/prod-ready-ai-app`)
   staying available and its `main` branch staying stable, since the reusable
   workflows and the readiness action fetch it at CI run time.
 - The skeleton's choices (Next.js App Router, Auth.js v5, OpenTelemetry,

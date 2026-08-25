@@ -75,7 +75,7 @@ module "keyvault" {
   source = "../../infra-modules/terraform/keyvault"
 
   # Or a git source:
-  # source = "git::https://github.com/{{GITHUB_USERNAME}}/prod-ready-ai-app.git//infra-modules/terraform/keyvault?ref=main"
+  # source = "git::https://github.com/mmoideen/prod-ready-ai-app.git//infra-modules/terraform/keyvault?ref=main"
 
   name                = "myapp"
   location            = azurerm_resource_group.example.location

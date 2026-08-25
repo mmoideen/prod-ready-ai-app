@@ -95,7 +95,7 @@ module "postgres" {
   source = "../../infra-modules/terraform/postgres"
 
   # Or a git source:
-  # source = "git::https://github.com/{{GITHUB_USERNAME}}/prod-ready-ai-app.git//infra-modules/terraform/postgres?ref=main"
+  # source = "git::https://github.com/mmoideen/prod-ready-ai-app.git//infra-modules/terraform/postgres?ref=main"
 
   name                   = "myapp"
   location               = azurerm_resource_group.example.location

@@ -1,9 +1,8 @@
 # NOTE: This workflow is inert while examples/minimal-ai-tool lives nested
-# inside the prod-ready-ai-app toolkit repository: {{GITHUB_USERNAME}} is a
-# placeholder, so the `uses:` reference below does not resolve to a real
-# workflow from here. It becomes active once this example is copied out
-# into its own repository and {{GITHUB_USERNAME}} is replaced with the
-# GitHub org/user that hosts your copy of prod-ready-ai-app.
+# inside the prod-ready-ai-app toolkit repository: GitHub only runs
+# workflows found at the repository root. It becomes active once this
+# example is copied out into its own repository. Repoint the toolkit
+# reference at your fork of prod-ready-ai-app if you host one.
 name: CI
 
 on:
@@ -18,10 +17,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Note toolkit context
-        run: 'echo "minimal-ai-tool CI note. Replace {{GITHUB_USERNAME}} in this file before relying on the reusable-ci job."'
+        run: 'echo "minimal-ai-tool CI note. The reusable-ci job below consumes the toolkit at mmoideen/prod-ready-ai-app. Repoint it if your org hosts a fork."'
 
   ci:
-    uses: "{{GITHUB_USERNAME}}/prod-ready-ai-app/.github/workflows/reusable-ci.yml@main"
+    uses: "mmoideen/prod-ready-ai-app/.github/workflows/reusable-ci.yml@main"
     with:
       node-version: "20"
       working-directory: "."

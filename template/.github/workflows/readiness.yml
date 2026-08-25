@@ -2,8 +2,8 @@
 # repository: GitHub Actions only discovers workflows under the repository ROOT
 # .github/workflows/ directory, and this file lives under template/.github/workflows/
 # instead. It activates automatically once a team copies template/ out to the root
-# of a new repository. Replace {{GITHUB_USERNAME}} with the org or user that hosts
-# the toolkit repository (or leave it if the toolkit is published under that name).
+# of a new repository. The toolkit reference below points at
+# mmoideen/prod-ready-ai-app. Repoint it if your org hosts a fork of the toolkit.
 name: Readiness gate
 
 on:
@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Check production readiness
-        uses: "{{GITHUB_USERNAME}}/prod-ready-ai-app/actions/reusable-readiness@main"
+        uses: "mmoideen/prod-ready-ai-app/actions/reusable-readiness@main"
         with:
           path: "."
           min-score: "85"

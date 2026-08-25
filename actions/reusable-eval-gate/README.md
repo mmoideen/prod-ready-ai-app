@@ -50,7 +50,7 @@ jobs:
         run: npm ci
 
       - name: Run evaluation gate
-        uses: {{GITHUB_USERNAME}}/prod-ready-ai-app/actions/reusable-eval-gate@main
+        uses: mmoideen/prod-ready-ai-app/actions/reusable-eval-gate@main
         with:
           eval-command: "npm run eval"
           working-directory: "."

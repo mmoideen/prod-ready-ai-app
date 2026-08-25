@@ -1,9 +1,8 @@
 # NOTE: This workflow is inert while examples/minimal-ai-tool lives nested
-# inside the prod-ready-ai-app toolkit repository: {{GITHUB_USERNAME}} is a
-# placeholder, so the composite action reference below does not resolve
-# from here. It becomes active once this example is copied out into its
-# own repository and {{GITHUB_USERNAME}} is replaced with the GitHub
-# org/user hosting your copy of prod-ready-ai-app.
+# inside the prod-ready-ai-app toolkit repository: GitHub only runs
+# workflows found at the repository root. It becomes active once this
+# example is copied out into its own repository. Repoint the composite
+# action reference at your fork of prod-ready-ai-app if you host one.
 name: Eval gate
 
 on:
@@ -30,7 +29,7 @@ jobs:
         run: npm run build
 
       - name: Run evaluation gate
-        uses: "{{GITHUB_USERNAME}}/prod-ready-ai-app/actions/reusable-eval-gate@main"
+        uses: "mmoideen/prod-ready-ai-app/actions/reusable-eval-gate@main"
         with:
           eval-command: "npm run eval"
           working-directory: "."

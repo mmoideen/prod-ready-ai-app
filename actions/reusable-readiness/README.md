@@ -18,7 +18,7 @@ This action integrates the production readiness scorecard CLI into your CI workf
 | path | string | No | "." | Path to scan for readiness (usually the repository root) |
 | min-score | string | No | "85" | Minimum readiness score required to pass. Use 85 for Production ready gate, 92 for Business critical. |
 | advisory | string | No | "false" | If "true", below-threshold scores are reported but do not fail the job. Useful for initial integration. |
-| toolkit-repo | string | No | "{{GITHUB_USERNAME}}/prod-ready-ai-app" | Toolkit repository to fetch the scorecard from (owner/repo format) |
+| toolkit-repo | string | No | "mmoideen/prod-ready-ai-app" | Toolkit repository to fetch the scorecard from (owner/repo format) |
 | toolkit-ref | string | No | "main" | Git ref (branch, tag, commit) of the toolkit to use |
 
 ## Outputs
@@ -51,12 +51,12 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Check production readiness
-        uses: {{GITHUB_USERNAME}}/prod-ready-ai-app/actions/reusable-readiness@main
+        uses: mmoideen/prod-ready-ai-app/actions/reusable-readiness@main
         with:
           path: "."
           min-score: "85"
           advisory: "false"
-          toolkit-repo: "{{GITHUB_USERNAME}}/prod-ready-ai-app"
+          toolkit-repo: "mmoideen/prod-ready-ai-app"
           toolkit-ref: "main"
 ```
 
