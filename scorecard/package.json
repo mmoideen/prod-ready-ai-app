@@ -1,0 +1,25 @@
+{
+  "name": "prod-ready-scorecard",
+  "version": "1.0.0",
+  "description": "Production readiness scorecard CLI. Scores a repository against the organization's rubric of 20 rules for internal AI tools and prints a markdown or JSON report.",
+  "type": "module",
+  "bin": {
+    "prod-ready-scorecard": "./dist/cli.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "npm run build && node --test dist/tests/*.test.js",
+    "prepare": "npm run build"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4",
+    "@types/node": "^20.14.10"
+  },
+  "license": "UNLICENSED"
+}

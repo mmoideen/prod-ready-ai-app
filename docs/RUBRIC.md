@@ -51,7 +51,7 @@ The default CI gate is `--min-score 85`, the Production ready threshold.
 
 ## Rule catalog
 
-19 rules across 9 categories. Weights sum to 100.
+20 rules across 9 categories. Weights sum to 100.
 
 ### Testing (weight 15)
 
@@ -80,7 +80,7 @@ Remediation: adopt the reusable workflows in this toolkit
 | --- | --- | --- | --- | --- |
 | SEC-1 | Secret scanning is configured | 4 | A workflow or config references a secret scanner (gitleaks, trufflehog, detect-secrets, or GitHub secret scanning via the reusable CI workflow), or a `.gitleaks.toml` exists | Never |
 | SEC-2 | No obvious secrets are committed | 4 | No committed `.env` file (other than `.env.example` or `.env.template`), no committed private key material (`*.pem`, `id_rsa`, `*.p12`, `*.pfx`), and no source lines matching well known live credential shapes (private key headers, `AKIA` style AWS access key IDs, GitHub `ghp_` tokens, generic `API_KEY=` assignments with long literal values) | Never |
-| SEC-3 | An env example exists with no real values | 3 | `.env.example` (or `.env.template`) exists, and every value in it is empty or an obvious placeholder (contains `example`, `changeme`, `your-`, `placeholder`, `xxx`, or `<...>` markers, or is empty) | Never |
+| SEC-3 | An env example exists with no real values | 3 | `.env.example` (or `.env.template`) exists, and every value in it is empty or an obvious placeholder (contains `example`, `changeme`, `your-`, `placeholder`, `xxx`, `fake`, `test`, `dummy`, or `sample`, or is wrapped in `<...>` markers, or is empty) | Never |
 | SEC-4 | Dependency updates are configured | 4 | `.github/dependabot.yml` or a Renovate configuration exists | Never |
 
 Remediation: copy `.env.example` and `dependabot.yml` from the template skeleton,
