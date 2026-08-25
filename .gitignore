@@ -1,0 +1,47 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+.next/
+out/
+build/
+*.tsbuildinfo
+
+# Environment and secrets. Never commit real values.
+# Scorecard test fixtures are exempt: they contain clearly fake values
+# used to prove the secret detection rules work.
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+!scorecard/fixtures/**/.env
+!scorecard/fixtures/**/*.key
+
+# Test and coverage output
+coverage/
+.nyc_output/
+
+# Terraform
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+crash.log
+
+# Bicep compiled output
+*.bicep.json
+
+# OS and editor noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Logs
+*.log
+npm-debug.log*
