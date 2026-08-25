@@ -1,0 +1,13 @@
+# Gitleaks configuration for this repository.
+# Extends the default ruleset. The only allowlisted paths are the scorecard
+# test fixtures, which contain deliberately fake signals (a committed .env
+# with placeholder values) used to prove the secret detection rules work.
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Scorecard test fixtures contain intentionally fake secret signals"
+paths = [
+  '''scorecard/fixtures/''',
+]
